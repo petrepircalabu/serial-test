@@ -6,11 +6,12 @@ from serial_base import SerialBaseCmd
 class SendBreakCmd(SerialBaseCmd):
 
     def __init__(self):
-        SerialBaseCmd.__init__(self, 'sendbreak', 'send BREAK to the specified port')
+        super(SendBreakCmd, self).__init__('sendbreak', 'send BREAK to the specified port')
 
     def add_arguments(self, parser):
         parser.add_argument('-d', '--duration', type=int, default=0,
             help='break duration')
+        super(SendBreakCmd, self).add_arguments(parser)
 
     def __call__(self, args):
         SendBreak(duration=args.duration, device=args.device)()
@@ -18,7 +19,7 @@ class SendBreakCmd(SerialBaseCmd):
 class SendBreak(SerialBase):
 
     def __init__(self, duration, device):
-        SerialBase.__init__(self, device)
+        super(SendBreak, self).__init__(device)
         self.duration = duration
 
     def __call__(self):
