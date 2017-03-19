@@ -14,14 +14,10 @@ class SendBreakCmd(SerialBaseCmd):
         super(SendBreakCmd, self).add_arguments(parser)
 
     def __call__(self, args):
-        SendBreak(duration=args.duration, device=args.device)()
+        SendBreak(duration=args.duration, device=args.devices[0])()
 
 class SendBreak(SerialBase):
 
     def __init__(self, duration, device):
         super(SendBreak, self).__init__(device)
         self.duration = duration
-
-    def __call__(self):
-        print "Execute SendBreak duration = {} device = {}".format(
-            self.duration, self.device)

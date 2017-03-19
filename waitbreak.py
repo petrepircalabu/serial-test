@@ -21,7 +21,3 @@ class WaitBreak(SerialBase):
     def __init__(self, duration, device):
         SerialBase.__init__(self, device)
         self.duration = duration
-
-    def __call__(self):
-        print "Execute WaitBreak duration = {} device = {}".format(
-            self.duration, self.device)
