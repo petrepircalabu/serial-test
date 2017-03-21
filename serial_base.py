@@ -8,6 +8,8 @@ class SerialBaseCmd(object):
         self.help = help
 
     def add_arguments(self, parser):
+        parser.add_argument('-b', '--baudrate', type=int, default=115200,
+            help='specify the baudrate')
         parser.add_argument('devices', nargs=1)
 
     def register(self, parser, list):
@@ -17,25 +19,13 @@ class SerialBaseCmd(object):
         self.add_arguments(parser)
 
 class SerialBase(object):
-    def __init__(self, device):
-        self._device = device
-        self._ser = None
+    def __init__(self, *args, **kwargs):
+        self.ser = []
+        print kwargs
+        for device in kwargs['devices']:
+            self.ser.append(serial.Serial(port=device, baudrate=kwargs['baudrate']))
+
+        print self.ser[0]
 
     def __call__(self):
-        try:
-            self.set_up()
-            self.run()
-        except:
-            print "Unexpected error:", sys.exc_info()[0]
-        finally:
-            self.tear_down()
-
-    def set_up(self):
-        # Open the port
-        self._ser = serial.Serial()
-
-    def tear_down(self):
-        pass
-
-    def run(self):
         pass

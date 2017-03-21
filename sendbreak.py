@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-from serial_base import SerialBase
 from serial_base import SerialBaseCmd
+from serial_base import SerialBase
 
 class SendBreakCmd(SerialBaseCmd):
 

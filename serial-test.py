@@ -2,6 +2,7 @@
 
 from sendbreak import SendBreakCmd
 from waitbreak import WaitBreakCmd
+from simple_send_receive import SimpleSendReceiveCmd
 
 import argparse
 
@@ -15,6 +16,7 @@ def register(cmd):
 def main():
     register(SendBreakCmd())
     register(WaitBreakCmd())
+    register(SimpleSendReceiveCmd())
 
     args = parser.parse_args();
     args.func(args)
