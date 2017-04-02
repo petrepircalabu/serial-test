@@ -10,6 +10,8 @@ class SerialBaseCmd(object):
     def add_arguments(self, parser):
         parser.add_argument('-b', '--baudrate', type=int, default=115200,
             help='specify the baudrate')
+        parser.add_argument('-t', '--timeout', type=int, default=60,
+            help='specify the commmand timeout')
         parser.add_argument('devices', nargs=1)
 
     def register(self, parser, list):
@@ -17,11 +19,3 @@ class SerialBaseCmd(object):
         parser = parser.add_parser(self.name, help=self.help)
         parser.set_defaults(func=self)
         self.add_arguments(parser)
-
-class SerialBase(object):
-    def __init__(self, *args, **kwargs):
-        pass
-
-    def __call__(self):
-        print "SerialBase::execute"
-        pass

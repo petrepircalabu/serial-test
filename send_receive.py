@@ -22,11 +22,3 @@ class SendReceiveCmd(SerialBaseCmd):
         group.add_argument('-l', '--loopback', dest='type', action='store_const',
             const = SendReceiveCmd.CmdType.LOOPBACK)
         super(SendReceiveCmd, self).add_arguments(parser)        
-
-class SendReceive(SerialBase):
-
-    def __init__(self, *args, **kwargs):
-        super(SendReceive, self).__init__(*args, **kwargs)
-
-    def __call__(self):
-        print "SendReceive::execute"

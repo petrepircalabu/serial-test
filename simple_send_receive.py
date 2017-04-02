@@ -25,14 +25,11 @@ class SimpleSendReceiveCmd(SendReceiveCmd):
         ser = serial.Serial(port=dict['devices'][0], baudrate=dict['baudrate'])
 
         with ReaderThread(ser, SimpleSendReceive) as test:
+            test.timeout = dict['timeout']
             if dict['type'] == SendReceiveCmd.CmdType.SENDER:
                 test.send_pattern()
             elif dict['type'] == SendReceiveCmd.CmdType.RECEIVER:
                 test.recv_pattern()
-                if test.pattern_received.is_set() == 1:
-                    print "Pattern Received"
-                else:
-                    print "Pattern NOT Received"                
             else:
                 print "Loopback not supported"
 
@@ -41,6 +38,7 @@ class SimpleSendReceive(LineReader):
     def __init__(self):
         self.test_pattern="All your base are belong to us"
         self.pattern_received = threading.Event()
+        self.timeout - 60
         super(SimpleSendReceive, self).__init__()
 
     def handle_line(self, data):
@@ -51,4 +49,4 @@ class SimpleSendReceive(LineReader):
         self.write_line(self.test_pattern)
 
     def recv_pattern(self):
-        self.pattern_received.wait(60)
+        self.pattern_received.wait(self.timeout)
