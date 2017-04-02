@@ -27,3 +27,6 @@ class SendReceive(SerialBase):
 
     def __init__(self, *args, **kwargs):
         super(SendReceive, self).__init__(*args, **kwargs)
+
+    def __call__(self):
+        print "SendReceive::execute"

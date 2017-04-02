@@ -20,12 +20,8 @@ class SerialBaseCmd(object):
 
 class SerialBase(object):
     def __init__(self, *args, **kwargs):
-        self.ser = []
-        print kwargs
-        for device in kwargs['devices']:
-            self.ser.append(serial.Serial(port=device, baudrate=kwargs['baudrate']))
-
-        print self.ser[0]
+        pass
 
     def __call__(self):
+        print "SerialBase::execute"
         pass
