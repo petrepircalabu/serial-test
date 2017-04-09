@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
+from serial_base import Serial
 from send_receive import SendReceiveCmd
 
-import serial
 from serial.threaded import LineReader
 from serial.threaded import ReaderThread
 import time
@@ -21,8 +21,8 @@ class SimpleSendReceiveCmd(SendReceiveCmd):
         dict = vars(args)
         dict.pop('func', None)
 
-        ser = serial.Serial(port=dict['devices'][0], baudrate=dict['baudrate'],
-            parity=dict['parity'])
+        ser = Serial(port=dict['devices'][0], baudrate=dict['baudrate'],
+            parity=dict['parity'], bytesize=dict['bytesize'])
 
         with ReaderThread(ser, SimpleSendReceive) as test:
             test.timeout = dict['timeout']
@@ -30,8 +30,13 @@ class SimpleSendReceiveCmd(SendReceiveCmd):
                 test.send_pattern()
             elif dict['type'] == SendReceiveCmd.CmdType.RECEIVER:
                 test.recv_pattern()
+            elif dict['type'] == SendReceiveCmd.CmdType.LOOPBACK:
+                ser.loopback = True
+                test.send_pattern()
+                test.recv_pattern()
+                ser.loopback = False
             else:
-                print "Loopback not supported"
+                print "Invalid type"
 
 class SimpleSendReceive(LineReader):
 

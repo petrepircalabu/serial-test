@@ -1,7 +1,10 @@
 #!/usr/bin/env python
 
+import array
 import serial
 import argparse
+import fcntl
+import termios
 
 class ParityAction(argparse.Action):
     def __init__(self, option_strings, dest, nargs=None, **kwargs):
@@ -40,3 +43,34 @@ class SerialBaseCmd(object):
         parser = parser.add_parser(self.name, help=self.help)
         parser.set_defaults(func=self)
         self.add_arguments(parser)
+
+TIOCM_LOOP = getattr(termios, 'TIOCM_LOOP', 0x8000)
+
+class Serial(serial.Serial):
+
+    @property
+    def loopback(self):
+        if not self.is_open:
+            raise portNonOpenError
+        buf = array.array('I', [0])
+        fcntl.ioctl(self.fd, termios.TIOCMGET, buf, 1)
+        return (buf[0] & TIOCM_LOOP) != 0
+
+    @loopback.setter
+    def loopback(self, value):
+        if not self.is_open:
+            raise portNonOpenError
+        print "Set loopback to "
+        print value
+        buf = array.array('I', [0])
+        print fcntl.ioctl(self.fd, termios.TIOCMGET, buf, 1)
+        print buf[0]
+        if value == False:
+            buf[0] &= ~TIOCM_LOOP
+        else:
+            buf[0] |= TIOCM_LOOP
+        print buf[0]
+        print fcntl.ioctl(self.fd, termios.TIOCMSET, buf, 1)
+        buf = array.array('L', [0])
+        print fcntl.ioctl(self.fd, termios.TIOCMGET, buf, 1)
+        print buf[0]
