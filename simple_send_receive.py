@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 from send_receive import SendReceiveCmd
-from send_receive import SendReceive
 
 import serial
 from serial.threaded import LineReader
@@ -22,7 +21,8 @@ class SimpleSendReceiveCmd(SendReceiveCmd):
         dict = vars(args)
         dict.pop('func', None)
 
-        ser = serial.Serial(port=dict['devices'][0], baudrate=dict['baudrate'])
+        ser = serial.Serial(port=dict['devices'][0], baudrate=dict['baudrate'],
+            parity=dict['parity'])
 
         with ReaderThread(ser, SimpleSendReceive) as test:
             test.timeout = dict['timeout']
@@ -38,7 +38,7 @@ class SimpleSendReceive(LineReader):
     def __init__(self):
         self.test_pattern="All your base are belong to us"
         self.pattern_received = threading.Event()
-        self.timeout - 60
+        self.timeout = 60
         super(SimpleSendReceive, self).__init__()
 
     def handle_line(self, data):
