@@ -39,7 +39,6 @@ class SimpleSendReceiveCmd(SendReceiveCmd):
                 print "Invalid type"
 
 class SimpleSendReceive(LineReader):
-
     def __init__(self):
         self.test_pattern="All your base are belong to us"
         self.pattern_received = threading.Event()
@@ -55,3 +54,5 @@ class SimpleSendReceive(LineReader):
 
     def recv_pattern(self):
         self.pattern_received.wait(self.timeout)
+        if not self.pattern_received.is_set():
+            raise ValueError('Timeout while receiving test pattern')

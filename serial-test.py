@@ -3,6 +3,8 @@
 from simple_send_receive import SimpleSendReceiveCmd
 
 import argparse
+import logging
+import sys
 
 commands = {}
 parser = argparse.ArgumentParser()
@@ -15,7 +17,11 @@ def main():
     register(SimpleSendReceiveCmd())
 
     args = parser.parse_args();
-    args.func(args)
+    try:
+    	args.func(args)
+    except Exception as ex:
+        logging.error('Command failed. {}'.format(type(ex).__name__, ex))
+        sys.exit(-1)
 
 if __name__ == "__main__":
     main()

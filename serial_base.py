@@ -53,24 +53,19 @@ class Serial(serial.Serial):
         if not self.is_open:
             raise portNonOpenError
         buf = array.array('I', [0])
-        fcntl.ioctl(self.fd, termios.TIOCMGET, buf, 1)
+        fcntl.ioctl(self.fd, termios.TIOCMGET, buf)
         return (buf[0] & TIOCM_LOOP) != 0
 
     @loopback.setter
     def loopback(self, value):
         if not self.is_open:
             raise portNonOpenError
-        print "Set loopback to "
-        print value
         buf = array.array('I', [0])
-        print fcntl.ioctl(self.fd, termios.TIOCMGET, buf, 1)
-        print buf[0]
+        fcntl.ioctl(self.fd, termios.TIOCMGET, buf)
         if value == False:
             buf[0] &= ~TIOCM_LOOP
         else:
             buf[0] |= TIOCM_LOOP
-        print buf[0]
-        print fcntl.ioctl(self.fd, termios.TIOCMSET, buf, 1)
+        fcntl.ioctl(self.fd, termios.TIOCMSET, buf)
         buf = array.array('L', [0])
-        print fcntl.ioctl(self.fd, termios.TIOCMGET, buf, 1)
-        print buf[0]
+        fcntl.ioctl(self.fd, termios.TIOCMGET, buf)
