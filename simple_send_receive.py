@@ -10,9 +10,11 @@ import threading
 
 class SimpleSendReceiveCmd(SendReceiveCmd):
 
-    def __init__(self):
-        super(SimpleSendReceiveCmd, self).__init__('simple-send-receive',
-            'Simple Send/Receive test')
+    def __init__(self,
+            name = 'simple-send-receive',
+            help = 'Simple Send/Receive test'):
+        super(SimpleSendReceiveCmd, self).__init__(name, help)
+        self.protocol_factory = SimpleSendReceive
 
     def add_arguments(self, parser):
         super(SimpleSendReceiveCmd, self).add_arguments(parser)
@@ -24,19 +26,16 @@ class SimpleSendReceiveCmd(SendReceiveCmd):
         ser = Serial(port=dict['devices'][0], baudrate=dict['baudrate'],
             parity=dict['parity'], bytesize=dict['bytesize'])
 
-        with ReaderThread(ser, SimpleSendReceive) as test:
+        with ReaderThread(ser, self.protocol_factory) as test:
             test.timeout = dict['timeout']
-            if dict['type'] == SendReceiveCmd.CmdType.SENDER:
-                test.send_pattern()
-            elif dict['type'] == SendReceiveCmd.CmdType.RECEIVER:
-                test.recv_pattern()
-            elif dict['type'] == SendReceiveCmd.CmdType.LOOPBACK:
-                ser.loopback = True
-                test.send_pattern()
-                test.recv_pattern()
-                ser.loopback = False
-            else:
-                print "Invalid type"
+
+            command_map = {
+                SendReceiveCmd.CmdType.SENDER   : test.sender,
+                SendReceiveCmd.CmdType.RECEIVER : test.receiver,
+                SendReceiveCmd.CmdType.LOOPBACK : test.loopback,
+            }
+
+            command_map[dict['type']]()
 
 class SimpleSendReceive(LineReader):
     def __init__(self):
@@ -49,10 +48,16 @@ class SimpleSendReceive(LineReader):
         if data == self.test_pattern:
             self.pattern_received.set()
 
-    def send_pattern(self):
+    def sender(self):
         self.write_line(self.test_pattern)
 
-    def recv_pattern(self):
+    def receiver(self):
         self.pattern_received.wait(self.timeout)
         if not self.pattern_received.is_set():
             raise ValueError('Timeout while receiving test pattern')
+
+    def loopback(self):
+        self.transport.serial.loopback = True
+        self.sender()
+        self.receiver()
+        self.transport.serial.loopback = False

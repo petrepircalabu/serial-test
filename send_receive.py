@@ -20,4 +20,4 @@ class SendReceiveCmd(SerialBaseCmd):
             const = SendReceiveCmd.CmdType.RECEIVER)
         group.add_argument('-l', '--loopback', dest='type', action='store_const',
             const = SendReceiveCmd.CmdType.LOOPBACK)
-        super(SendReceiveCmd, self).add_arguments(parser)        
+        super(SendReceiveCmd, self).add_arguments(parser)

@@ -21,6 +21,7 @@ def main():
     	args.func(args)
     except Exception as ex:
         logging.error('Command failed. {}'.format(type(ex).__name__, ex))
+        raise
         sys.exit(-1)
 
 if __name__ == "__main__":
