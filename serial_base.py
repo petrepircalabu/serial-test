@@ -69,3 +69,26 @@ class Serial(serial.Serial):
         fcntl.ioctl(self.fd, termios.TIOCMSET, buf)
         buf = array.array('L', [0])
         fcntl.ioctl(self.fd, termios.TIOCMGET, buf)
+
+    @property
+    def cread(self):
+        if not self.is_open:
+            raise portNonOpenError
+        orig_attr = termios.tcgetattr(self.fd)
+        iflag, oflag, cflag, lflag, ispeed, ospeed, cc = orig_attr
+        return (cflag & termios.CREAD) != 0
+
+    @cread.setter
+    def cread(self, value):
+        if not self.is_open:
+            raise portNonOpenError
+        orig_attr = termios.tcgetattr(self.fd)
+        iflag, oflag, cflag, lflag, ispeed, ospeed, cc = orig_attr
+        if value == False:
+            cflag &= ~termios.CREAD
+        else:
+            cflag |= termios.CREAD
+        termios.tcsetattr(
+            self.fd,
+            termios.TCSANOW,
+            [iflag, oflag, cflag, lflag, ispeed, ospeed, cc])

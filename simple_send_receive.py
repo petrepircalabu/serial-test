@@ -19,6 +19,9 @@ class SimpleSendReceiveCmd(SendReceiveCmd):
     def add_arguments(self, parser):
         super(SimpleSendReceiveCmd, self).add_arguments(parser)
 
+    def prepare(self, test, dict):
+        test.timeout = dict['timeout']
+
     def __call__(self, args):
         dict = vars(args)
         dict.pop('func', None)
@@ -27,7 +30,7 @@ class SimpleSendReceiveCmd(SendReceiveCmd):
             parity=dict['parity'], bytesize=dict['bytesize'])
 
         with ReaderThread(ser, self.protocol_factory) as test:
-            test.timeout = dict['timeout']
+            self.prepare(test, dict)
 
             command_map = {
                 SendReceiveCmd.CmdType.SENDER   : test.sender,

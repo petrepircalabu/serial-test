@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from simple_send_receive import SimpleSendReceiveCmd
+from comm_test import CreadTestCmd
 
 import argparse
 import logging
@@ -15,6 +16,7 @@ def register(cmd):
 
 def main():
     register(SimpleSendReceiveCmd())
+    register(CreadTestCmd())
 
     args = parser.parse_args();
     try:
