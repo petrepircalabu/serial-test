@@ -27,7 +27,7 @@ class SimpleSendReceiveCmd(SendReceiveCmd):
         dict.pop('func', None)
 
         ser = Serial(port=dict['devices'][0], baudrate=dict['baudrate'],
-            parity=dict['parity'], bytesize=dict['bytesize'])
+            parity=dict['parity'], bytesize=dict['bytesize'], rtscts=dict['rtscts'])
 
         with ReaderThread(ser, self.protocol_factory) as test:
             self.prepare(test, dict)
