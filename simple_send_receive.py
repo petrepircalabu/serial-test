@@ -17,6 +17,8 @@ class SimpleSendReceiveCmd(SendReceiveCmd):
         self.protocol_factory = SimpleSendReceive
 
     def add_arguments(self, parser):
+        parser.add_argument('--delay-exec', type=int, default=0,
+            help='delay execution with <param> seconds')
         super(SimpleSendReceiveCmd, self).add_arguments(parser)
 
     def prepare(self, test, dict):
@@ -27,7 +29,10 @@ class SimpleSendReceiveCmd(SendReceiveCmd):
         dict.pop('func', None)
 
         ser = Serial(port=dict['devices'][0], baudrate=dict['baudrate'],
-            parity=dict['parity'], bytesize=dict['bytesize'], rtscts=dict['rtscts'])
+            parity=dict['parity'], bytesize=dict['bytesize'],
+            stopbits=dict['stop_bits'], rtscts=dict['rtscts'])
+
+        time.sleep(dict['delay_exec'])
 
         with ReaderThread(ser, self.protocol_factory) as test:
             self.prepare(test, dict)
