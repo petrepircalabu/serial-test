@@ -7,19 +7,7 @@ from serial.threaded import LineReader
 from serial.threaded import ReaderThread
 import time
 import threading
-
-class CreadTestCmd(SimpleSendReceiveCmd):
-
-    def __init__ (self,
-            name = 'cread-test',
-            help = 'Test if the driver allows input to be received'):
-        super(CreadTestCmd, self).__init__(name, help)
-        self.protocol_factory = CreadTest
-
-    def prepare(self, test, dict):
-        super(CreadTestCmd, self).prepare(test, dict)
-        test.inhibit_property = 'cread'
-
+import serial
 
 class CommInhibitTest(LineReader):
     def __init__(self):
@@ -31,6 +19,9 @@ class CommInhibitTest(LineReader):
         self.pattern_received = threading.Event()
         self.timeout = 60
         super(CommInhibitTest, self).__init__()
+
+    def inhibit(self):
+        pass
 
     def handle_line(self, data):
         if data == self.expected:
@@ -76,7 +67,7 @@ class CommInhibitTest(LineReader):
             raise ValueError('Timeout')
 
         # inhibit communication
-        setattr(self.transport.serial, self.inhibit_property, False)
+        self.inhibit(True)
 
         # send response 1
         self.write_line(self.resp_ok)
@@ -90,7 +81,7 @@ class CommInhibitTest(LineReader):
             raise ValueError('Data received')
 
         # restore communication
-        setattr(self.transport.serial, self.inhibit_property, True)
+        self.inhibit(False)
 
         # wait command 3
         self.expected = self.cmd3
@@ -105,6 +96,20 @@ class CommInhibitTest(LineReader):
     def loopback(self):
         pass
 
+
+class CreadTestCmd(SimpleSendReceiveCmd):
+    def __init__ (self,
+            name = 'cread-test',
+            help = 'Test if the driver allows input to be received'):
+        super(CreadTestCmd, self).__init__(name, help)
+        self.protocol_factory = CreadTest
+
+    def prepare(self, test, dict):
+        super(CreadTestCmd, self).prepare(test, dict)
+
 class CreadTest(CommInhibitTest):
     def __init__(self):
         super(CreadTest, self).__init__()
+
+    def inhibit(self, value):
+        self.transport.serial.cread = not value

@@ -34,8 +34,13 @@ class SerialBaseCmd(object):
         parser.add_argument('--bytesize', type=int,
             choices = [serial.FIVEBITS, serial.SIXBITS, serial.SEVENBITS, serial.EIGHTBITS],
             default=serial.EIGHTBITS, help='specify the number of bits')
-        parser.add_argument('--rtscts', dest='rtscts', action='store_true',
+
+        flow_ctrl_group = parser.add_mutually_exclusive_group()
+        flow_ctrl_group.add_argument('--rtscts', dest='rtscts', action='store_true',
             default = False, help="Enable RTS/CTS flow")
+        flow_ctrl_group.add_argument('--xonxoff', dest='xonxoff', action='store_true',
+            default = False, help="Enable XON/XOFF software flow control")
+
         parser.add_argument('-t', '--timeout', type=int, default=60,
             help='specify the commmand timeout')
         parser.add_argument('devices', nargs=1)

@@ -30,7 +30,8 @@ class SimpleSendReceiveCmd(SendReceiveCmd):
 
         ser = Serial(port=dict['devices'][0], baudrate=dict['baudrate'],
             parity=dict['parity'], bytesize=dict['bytesize'],
-            stopbits=dict['stop_bits'], rtscts=dict['rtscts'])
+            stopbits=dict['stop_bits'], rtscts=dict['rtscts'],
+            xonxoff=dict['xonxoff'])
 
         time.sleep(dict['delay_exec'])
 
