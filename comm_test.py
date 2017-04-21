@@ -94,12 +94,12 @@ class CommInhibitTest(LineReader):
         self.write_line(self.resp_ok)
 
     def loopback(self):
-        pass
+        raise ValueError("Loopback mode not allowed")
 
 
 class CreadTestCmd(SimpleSendReceiveCmd):
     def __init__ (self,
-            name = 'cread-test',
+            name = 'cread',
             help = 'Test if the driver allows input to be received'):
         super(CreadTestCmd, self).__init__(name, help)
         self.protocol_factory = CreadTest
